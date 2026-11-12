@@ -2,6 +2,21 @@
 name = "tqdm-cmux"
 version = "0.1.0"
 description = "A drop-in tqdm subclass that mirrors progress into the cmux sidebar"
+keywords = ["tqdm", "cmux", "progress", "progress-bar", "terminal"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Typing :: Typed",
+    "Topic :: Terminals",
+]
 license = "MIT"
 license-files = ["LICENSE"]
 readme = "README.md"
@@ -28,5 +43,5 @@ module-name = "tqdm_cmux"
 
 [dependency-groups]
 dev = [
-    "pytest>=9.2.0",
+    "pytest>=8",
 ]

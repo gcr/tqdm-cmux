@@ -232,3 +232,6 @@ layouts/
 **/.stignore
 
 .stversions/**
+
+# Build artifacts
+dist/
