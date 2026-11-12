@@ -2,7 +2,7 @@
 
 Usage::
 
-    from cmux_tqdm import cmux_tqdm as tqdm
+    from tqdm_cmux import tqdm_cmux as tqdm
 
     for epoch in tqdm(range(10), desc="Training"):
         ...
@@ -28,7 +28,7 @@ from ._bridge import (
 )
 from ._nested import composite_fraction, composite_label
 
-__all__ = ["cmux_available", "cmux_tqdm", "install"]
+__all__ = ["available", "install", "tqdm_cmux"]
 
 
 _local = threading.local()
@@ -39,16 +39,16 @@ _bridges_lock = threading.Lock()
 # -- per-thread nesting stack ---------------------------------------------
 
 
-def _stack() -> list[weakref.ref[cmux_tqdm]]:
+def _stack() -> list[weakref.ref[tqdm_cmux]]:
     stack = getattr(_local, "stack", None)
     if stack is None:
         stack = _local.stack = []
     return stack
 
 
-def _live_stack() -> list[cmux_tqdm]:
+def _live_stack() -> list[tqdm_cmux]:
     """Active bars in this thread, outermost first."""
-    live: list[cmux_tqdm] = []
+    live: list[tqdm_cmux] = []
     for ref in list(_stack()):
         bar = ref()
         if bar is None:
@@ -71,7 +71,7 @@ def _bridge_for(workspace: str) -> ProgressBridge | None:
         return bridge
 
 
-def cmux_available(workspace: str | None = None) -> bool:
+def available(workspace: str | None = None) -> bool:
     """True when a cmux CLI and a target workspace are both available."""
     if disabled_by_env():
         return False
@@ -81,7 +81,7 @@ def cmux_available(workspace: str | None = None) -> bool:
 # -- the drop-in class ----------------------------------------------------
 
 
-class cmux_tqdm(_std_tqdm):
+class tqdm_cmux(_std_tqdm):
     """tqdm, plus a throttled ``cmux set-progress`` mirror in the sidebar.
 
     Extra keyword arguments (all optional):
@@ -106,7 +106,7 @@ class cmux_tqdm(_std_tqdm):
     ):
         workspace = cmux_workspace or default_workspace()
         if cmux is None:
-            cmux = cmux_available(workspace)
+            cmux = available(workspace)
 
         self._cmux_closed = True  # no-op until we actually attach
         self._cmux_active = False
@@ -187,13 +187,15 @@ _derived: dict[type, type] = {}
 
 
 def _derived_class(base: type) -> type:
-    """A cmux_tqdm that keeps ``base``'s frontend (notebook, asyncio, ...) in the MRO."""
-    if issubclass(base, cmux_tqdm):
+    """A tqdm_cmux that keeps ``base``'s frontend (notebook, asyncio, ...) in the MRO."""
+    if issubclass(base, tqdm_cmux):
         # Already cmux-aware (e.g. imported after tqdm.std.tqdm was patched).
         return base
     cls = _derived.get(base)
     if cls is None:
-        cls = type(f"Cmux{base.__name__}", (cmux_tqdm, base), {"__module__": __name__})
+        cls = type(
+            f"TqdmCmux_{base.__name__}", (tqdm_cmux, base), {"__module__": __name__}
+        )
         _derived[base] = cls
     return cls
 
@@ -205,10 +207,10 @@ def install() -> None:
     ``from tqdm import tqdm`` keep the original class, so call this as early as
     possible — e.g. from ``sitecustomize.py`` in a dedicated venv::
 
-        import cmux_tqdm
-        cmux_tqdm.install()
+        import tqdm_cmux
+        tqdm_cmux.install()
     """
-    if disabled_by_env() or not cmux_available():
+    if disabled_by_env() or not available():
         return
 
     import tqdm as _tqdm

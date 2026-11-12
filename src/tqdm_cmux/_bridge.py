@@ -15,10 +15,10 @@ import subprocess
 import threading
 import time
 
-_ENV_DISABLE = "CMUX_TQDM_DISABLE"
-_ENV_BIN = "CMUX_TQDM_BIN"
-_ENV_INTERVAL = "CMUX_TQDM_INTERVAL"
-_ENV_WORKSPACE = "CMUX_TQDM_WORKSPACE"
+_ENV_DISABLE = "TQDM_CMUX_DISABLE"
+_ENV_BIN = "TQDM_CMUX_BIN"
+_ENV_INTERVAL = "TQDM_CMUX_INTERVAL"
+_ENV_WORKSPACE = "TQDM_CMUX_WORKSPACE"
 _DEFAULT_INTERVAL = 0.5
 _MAX_FAILURES = 3
 
@@ -66,7 +66,7 @@ class ProgressBridge:
         self.workspace = workspace
         self.binary = binary or find_binary()
         self.interval = max(0.0, interval)
-        # Set by cmux_tqdm(..., cmux_leave=True): keep the final bar at exit.
+        # Set by tqdm_cmux(..., cmux_leave=True): keep the final bar at exit.
         self.leave = False
         self._cond = threading.Condition()
         self._pending: tuple[str, float, str | None] | None = None
@@ -75,7 +75,7 @@ class ProgressBridge:
         self._failures = 0
         self._dead = self.binary is None
         self._thread = threading.Thread(
-            target=self._run, name="cmux-tqdm-progress", daemon=True
+            target=self._run, name="tqdm-cmux-progress", daemon=True
         )
         self._thread.start()
         atexit.register(self.close)

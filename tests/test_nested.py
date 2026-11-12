@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from cmux_tqdm._nested import composite_fraction, composite_label
+from tqdm_cmux._nested import composite_fraction, composite_label
 
 
 @dataclass

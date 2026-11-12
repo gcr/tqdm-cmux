@@ -1,4 +1,4 @@
-# cmux-tqdm
+# tqdm-cmux
 
 > 🤖 [AIL=5](https://danielmiessler.com/blog/ai-influence-level-ail), this project was made to scratch a quick itch and is unlikely to be carefully maintained.
 
@@ -7,7 +7,7 @@ the [cmux](https://cmuxterm.app) sidebar with `cmux set-progress`, so long
 experiments are visible outside the terminal.
 
 ```python
-from cmux_tqdm import cmux_tqdm as tqdm
+from tqdm_cmux import tqdm_cmux as tqdm
 
 for epoch in tqdm(range(10), desc="Training"):
     ...
@@ -38,10 +38,10 @@ Environment overrides:
 
 | var | meaning |
 |---|---|
-| `CMUX_TQDM_DISABLE=1` | Disable all mirroring. |
-| `CMUX_TQDM_BIN` | Path to the `cmux` CLI. |
-| `CMUX_TQDM_WORKSPACE` | Target workspace when `CMUX_WORKSPACE_ID` is absent. |
-| `CMUX_TQDM_INTERVAL` | Minimum seconds between sidebar updates (default `0.5`). |
+| `TQDM_CMUX_DISABLE=1` | Disable all mirroring. |
+| `TQDM_CMUX_BIN` | Path to the `cmux` CLI. |
+| `TQDM_CMUX_WORKSPACE` | Target workspace when `CMUX_WORKSPACE_ID` is absent. |
+| `TQDM_CMUX_INTERVAL` | Minimum seconds between sidebar updates (default `0.5`). |
 
 ## Nested bars
 
@@ -65,7 +65,7 @@ rendering (an outer bar with a known total still reports its own progress).
 
 tqdm has no plugin API, so there is no zero-touch hook. If the importing
 package does `from tqdm import tqdm`, only an early import-time patch can
-reach it. `cmux_tqdm.install()` does that explicitly — it swaps
+reach it. `tqdm_cmux.install()` does that explicitly — it swaps
 `tqdm.tqdm`, `tqdm.std.tqdm`, `tqdm.auto.tqdm` and `tqdm.asyncio.tqdm` for
 cmux-aware subclasses.
 
@@ -74,13 +74,13 @@ Call it before the library imports tqdm, e.g. from a `sitecustomize.py` on
 
 ```python
 # sitecustomize.py
-import cmux_tqdm
-cmux_tqdm.install()
+import tqdm_cmux
+tqdm_cmux.install()
 ```
 
 Modules that already bound `from tqdm import tqdm` before `install()` keep the
 original class. Without a cmux binary (or outside a workspace) `install()` is a
-no-op and `cmux_tqdm` is a plain tqdm subclass: no worker thread, no
+no-op and `tqdm_cmux` is a plain tqdm subclass: no worker thread, no
 subprocess, no sidebar calls.
 
 ## How it works

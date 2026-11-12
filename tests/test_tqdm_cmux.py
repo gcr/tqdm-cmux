@@ -8,8 +8,8 @@ import tqdm
 import tqdm.auto
 import tqdm.std
 
-import cmux_tqdm as mod
-from cmux_tqdm import _bridge, cmux_tqdm
+import tqdm_cmux as mod
+from tqdm_cmux import _bridge, tqdm_cmux
 
 
 class Recorder:
@@ -40,10 +40,10 @@ def recorder(monkeypatch) -> Recorder:
     return rec
 
 
-def bar(total=4, **kwargs) -> cmux_tqdm:
+def bar(total=4, **kwargs) -> tqdm_cmux:
     kwargs.setdefault("cmux", True)
     kwargs.setdefault("cmux_workspace", "ws")
-    return cmux_tqdm(total=total, file=io.StringIO(), mininterval=0, **kwargs)
+    return tqdm_cmux(total=total, file=io.StringIO(), mininterval=0, **kwargs)
 
 
 def test_updates_and_clears_on_close(recorder):
@@ -55,7 +55,7 @@ def test_updates_and_clears_on_close(recorder):
 
 
 def test_iterable_closes_implicitly(recorder):
-    for _ in cmux_tqdm(
+    for _ in tqdm_cmux(
         range(4), file=io.StringIO(), mininterval=0, cmux=True, cmux_workspace="ws"
     ):
         pass
@@ -94,7 +94,7 @@ def test_leave_keeps_final_bar(recorder):
 
 
 def test_disabled_tqdm_never_touches_cmux(recorder):
-    b = cmux_tqdm(total=4, disable=True, cmux=True, cmux_workspace="ws")
+    b = tqdm_cmux(total=4, disable=True, cmux=True, cmux_workspace="ws")
     b.update(1)
     b.close()
     assert recorder.updates == [] and recorder.clears == 0
@@ -108,15 +108,15 @@ def test_explicitly_disabled_cmux_never_touches_cmux(recorder):
 
 
 def test_no_workspace_means_plain_tqdm(monkeypatch):
-    for var in ("CMUX_WORKSPACE_ID", "CMUX_TQDM_WORKSPACE"):
+    for var in ("CMUX_WORKSPACE_ID", "TQDM_CMUX_WORKSPACE"):
         monkeypatch.delenv(var, raising=False)
 
     def boom(workspace):
         raise AssertionError("bridge must not be created without a workspace")
 
     monkeypatch.setattr(mod, "_bridge_for", boom)
-    assert mod.cmux_available() is False
-    for _ in cmux_tqdm(range(3), file=io.StringIO(), mininterval=0):
+    assert mod.available() is False
+    for _ in tqdm_cmux(range(3), file=io.StringIO(), mininterval=0):
         pass
 
 
@@ -131,8 +131,8 @@ def test_install_patches_core_classes(monkeypatch, recorder):
 
     mod.install()
 
-    assert issubclass(tqdm.tqdm, mod.cmux_tqdm)
-    assert issubclass(tqdm.std.tqdm, mod.cmux_tqdm)
+    assert issubclass(tqdm.tqdm, mod.tqdm_cmux)
+    assert issubclass(tqdm.std.tqdm, mod.tqdm_cmux)
     with tqdm.tqdm(
         total=2, file=io.StringIO(), mininterval=0, cmux=True, cmux_workspace="ws"
     ) as b:
@@ -157,11 +157,11 @@ def test_without_cmux_binary_it_is_plain_tqdm(monkeypatch):
     spawned: list[object] = []
     monkeypatch.setattr(_bridge.subprocess, "run", lambda *a, **k: spawned.append(a))
 
-    assert mod.cmux_available() is False
+    assert mod.available() is False
 
     # Even an explicit cmux=True cannot attach without a binary.
     seen = []
-    for i in cmux_tqdm(
+    for i in tqdm_cmux(
         range(3),
         file=io.StringIO(),
         mininterval=0,
