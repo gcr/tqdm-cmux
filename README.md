@@ -1,6 +1,6 @@
 # cmux-tqdm
 
-🤖 [AIL=5](https://danielmiessler.com/blog/ai-influence-level-ail)
+> 🤖 [AIL=5](https://danielmiessler.com/blog/ai-influence-level-ail), this project was made to scratch a quick itch and is unlikely to be carefully maintained.
 
 A drop-in [tqdm](https://tqdm.github.io) subclass that mirrors progress into
 the [cmux](https://cmuxterm.app) sidebar with `cmux set-progress`, so long
