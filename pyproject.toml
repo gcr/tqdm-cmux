@@ -1,0 +1,27 @@
+[project]
+name = "tqdm-cmux"
+version = "0.1.0"
+description = "A drop-in tqdm subclass that mirrors progress into the cmux sidebar"
+license = "MIT"
+license-files = ["LICENSE"]
+readme = "README.md"
+authors = [
+    { name = "Kimberly Wilber", email = "kimmy@kjwilber.org" },
+    { name = "Deepseek V4.1 Flash 1017", email = "deepseek-v4.1-flash@noreply.deepseek.com" },
+]
+requires-python = ">=3.13"
+dependencies = [
+    "tqdm>=4.70.1",
+]
+
+[build-system]
+requires = ["uv_build>=0.13.7,<0.14.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "cmux_tqdm"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+]
