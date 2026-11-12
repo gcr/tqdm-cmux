@@ -19,8 +19,8 @@ class behaves exactly like `tqdm` and spawns nothing.
 ## Install
 
 ```sh
-uv add --editable .
-# or: pip install -e .
+uv add tqdm-cmux
+# or: pip install tqdm-cmux
 ```
 
 ## Options

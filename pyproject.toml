@@ -9,10 +9,15 @@ authors = [
     { name = "Kimberly Wilber", email = "kimmy@kjwilber.org" },
     { name = "Deepseek V4.1 Flash 1017", email = "deepseek-v4.1-flash@noreply.deepseek.com" },
 ]
-requires-python = ">=3.13"
+requires-python = ">=3.9"
 dependencies = [
     "tqdm>=4.70.1",
 ]
+
+[project.urls]
+Homepage = "https://github.com/gcr/tqdm-cmux"
+Repository = "https://github.com/gcr/tqdm-cmux"
+Issues = "https://github.com/gcr/tqdm-cmux/issues"
 
 [build-system]
 requires = ["uv_build>=0.13.7,<0.14.0"]

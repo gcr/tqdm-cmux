@@ -10,6 +10,7 @@
 *.duckdb
 
 # Byte-compiled / optimized / DLL files
+dist/
 __pycache__/
 *.py[codz]
 *$py.class
